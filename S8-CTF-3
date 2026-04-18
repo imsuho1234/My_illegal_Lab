@@ -1,9 +1,9 @@
-# CTF Write-up (Dreamhack ctf season 8 round 3 - reversing - 1 / Custom encoding)
+#CTF Write-up (Dreamhack ctf season 8 round 3 - reversing - 1 / Custom encoding)
 File type: ELF 64-bit executable
 Executed in my virtual machine**
 
 Key Features: Custom Encoding Problems Converting User Inputs to a Specific Charset Base and Comparing It to Hard-Coded Values
-# Object: enter the secret key -> FLAG!!!
+#Object: enter the secret key -> FLAG!!!
 
 Analysis
 
@@ -19,7 +19,7 @@ Custom Encoding Algorithm analysis shows that the program performs the following
 input character ($c_i$): $Index_{out} = ($Index_{in} + i + 3) \pmod{62}$$Index_{in}$: Original character position in Charset$i$: 
 Index of current character (0-based)$3$: Fixed offset (Salt)$62$: Total length of Charset must match the # correct answer string **d9xJaU5YpMiK9t71WlG** hardcoded in the binary.
 Apply the inverse operation formula below to reverse the Exploit; 
-# Solution algorithm: $$Index_{in} = (Index_{out} - i - 3)
+#Solution algorithm: $$Index_{in} = (Index_{out} - i - 3)
 
 Thanks :)
 2026-04-18
