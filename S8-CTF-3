@@ -1,0 +1,25 @@
+# CTF Write-up (Dreamhack ctf season 8 round 3 - reversing - 1 / Custom encoding)
+File type: ELF 64-bit executable
+Executed in my virtual machine**
+
+Key Features: Custom Encoding Problems Converting User Inputs to a Specific Charset Base and Comparing It to Hard-Coded Values
+# Object: enter the secret key -> FLAG!!!
+
+Analysis
+
+Analysis & Identification Statistical Analysis When tracking the flow of the program through the command,
+we found a Charset of 62 characters that is believed to be used for encryption:
+qwertyuiopasdfghjklzxcvbnm0123456789QWERTYUIOPASDFGHJKLZXCVBNM is also scattered with the success message
+(Correct! Here is your flag:) and the estimated fragments of the correct answer 
+(d9xJaU5Y, pMiK9t71, WlG). When tracking the flow of the program through Dynamic Analysis
+(ltrace)ltrace, we found two critical clues: length verification: Measure the length of the input with strlen to determine 
+if it is 19 characters. When entering transform logic: 12345..., it is confirmed that the input is not compared as it is,
+but is compared to 468QE... at strcmp. This is proof that it goes through certain operations.
+Custom Encoding Algorithm analysis shows that the program performs the following index substitution operations for each
+input character ($c_i$): $Index_{out} = ($Index_{in} + i + 3) \pmod{62}$$Index_{in}$: Original character position in Charset$i$: 
+Index of current character (0-based)$3$: Fixed offset (Salt)$62$: Total length of Charset must match the # correct answer string **d9xJaU5YpMiK9t71WlG** hardcoded in the binary.
+Apply the inverse operation formula below to reverse the Exploit; 
+# Solution algorithm: $$Index_{in} = (Index_{out} - i - 3)
+
+Thanks :)
+2026-04-18
