@@ -1,0 +1,35 @@
+# Write-up: Predictable Session Token Exploit (Dreamhack - What time is it?(web))
+
+Analysis of session.pyThe session management logic in session.py is as follows:
+
+Pythondef make_session(username: str, created_at: int) -> str:
+    return f"{username}.{created_at * 2026}"
+
+def parse_session(value: str):
+    if not value or "." not in value:
+        return None
+    username, token = value.split(".", 1)
+    username = username.strip()
+    token = token.strip()
+    if not username or not token:
+        return None
+    return username, token
+
+def verify_session(value: str, created_at: int) -> str | None:
+    parsed = parse_session(value)
+    if not parsed:
+        return None
+    username, token = parsed
+    return username if token == str(created_at * 2026) else None
+
+The session is structured as {username}.{token}, 
+where the token is simply the user's account creation time (created_at) multiplied by 2026. 
+This makes the session token highly predictable if the creation time is known.
+ Information GatheringBy creating an arbitrary account and logging in,
+ we can access the /welcome page, which displays the registration times of all users, including the administrator.Admin's Creation Time: 
+19/04/2026, 02:11:07 UTCUnix Timestamp Conversion: 17765646673. Exploit StepsUsing the discovered timestamp,
+ we can calculate the valid session token for the admin:Calculate Token: $1776564667 \times 2026 = 3599320015342$Forge Session Cookie: 
+The complete session string for the admin is admin.3599320015342.Cookie Manipulation:Open Developer Tools (F12).Navigate to the Application tab
+and locate Cookies.Modify the session cookie value to admin.3599320015342.Set the Path to /.Gain Access: Refresh the main page. The server verifies the forged token, identifies the user as admin,
+and grants administrative privileges (displaying the flag).ConclusionThis challenge demonstrates a vulnerability involving Predictable Session Tokens.
+The lack of cryptographic signing or random salting allows an attacker to impersonate any user by calculating their session value.
