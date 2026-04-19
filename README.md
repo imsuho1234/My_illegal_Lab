@@ -1,2 +1,3 @@
-# My_illegal_Lab
-welcome~ ;)
+# Hacking is an application study
+
+A story about my hacking life
